@@ -1,52 +1,89 @@
-#this is chloe hi
 import random
 
 # Player attributes
 player = {
     "health": 100,
     "inventory": [],
+    "xp": 0,
+    "level": 1
 }
 
 # Enemy types with different behaviors
 enemies = {
     "Guard": {"health": 30, "attack": 10, "behavior": "aggressive"},
-    "Assasin": {"health": 25, "attack": 15, "behavior": "stealthy"},
+    "Assassin": {"health": 25, "attack": 15, "behavior": "stealthy"},
 }
 
-# Random encounter generator
-def random_encounter():
-    if random.choice([True, False]):  # 50% chance of encounter
-        enemy = random.choice(list(enemies.keys()))
-        print(f"\nYou encounter a {enemy}!")
-        fight_enemy(enemy)
+# Leveling system
+def level_up():
+    if player["xp"] >= player["level"] * 10:
+        player["level"] += 1
+        player["health"] = 100  # Restore health on level up
+        print(f"\nCongratulations! You leveled up to Level {player['level']}!")
+
+# Healing function
+def heal_player():
+    if "Health Potion" in player["inventory"]:
+        player["health"] = min(100, player["health"] + 30)
+        player["inventory"].remove("Health Potion")
+        print("\nYou drink a Health Potion and recover 30 HP!")
+    else:
+        print("\nYou don't have any healing items!")
 
 # Combat system
 def fight_enemy(enemy_name):
     enemy = enemies[enemy_name]
     while player["health"] > 0 and enemy["health"] > 0:
-        action = input("\nChoose an action: (1) Attack (2) Run: ")
+        print(f"\n{enemy_name} Health: {enemy['health']} | Your Health: {player['health']}")
+        action = input("\nChoose an action: (1) Light Attack (2) Heavy Attack (3) Dodge (4) Run: ")
+
         if action == "1":
-            damage = random.randint(5, 15)
+            damage = random.randint(5, 10)
             enemy["health"] -= damage
-            print(f"You attack the {enemy_name} for {damage} damage!")
-            if enemy["health"] <= 0:
-                print(f"You defeated the {enemy_name}!")
-                return
-            # Enemy attacks back
-            player["health"] -= enemy["attack"]
-            print(f"The {enemy_name} attacks you for {enemy['attack']} damage!")
+            print(f"You deal {damage} damage to the {enemy_name}!")
         elif action == "2":
-            if random.choice([True, False]):  # 50% escape chance
-                print("You managed to escape!")
+            if random.random() > 0.3:
+                damage = random.randint(10, 20)
+                enemy["health"] -= damage
+                print(f"Heavy hit! You deal {damage} damage to the {enemy_name}!")
+            else:
+                print("Your heavy attack missed!")
+        elif action == "3":
+            if random.random() > 0.5:
+                print("You dodged the attack successfully!")
+                continue
+            else:
+                print("You failed to dodge!")
+        elif action == "4":
+            if random.choice([True, False]):
+                print("You successfully escaped!")
                 return
             else:
                 print("You failed to escape!")
         else:
             print("Invalid action.")
+            continue
 
-    if player["health"] <= 0:
-        print("\nYou have been defeated. Game over!")
-        exit()
+        if enemy["health"] <= 0:
+            print(f"You defeated the {enemy_name}!")
+            player["xp"] += 10
+            level_up()
+            return
+
+        enemy_damage = random.randint(enemy["attack"] - 5, enemy["attack"] + 5)
+        player["health"] -= enemy_damage
+        print(f"The {enemy_name} attacks you for {enemy_damage} damage!")
+
+        if player["health"] <= 0:
+            print("\nYou have been defeated. Game over!")
+            exit()
+
+# Random encounter generator
+def random_encounter():
+    if random.choice([True, False]):
+        enemy = random.choice(list(enemies.keys()))
+        print(f"\nYou encounter a {enemy}!")
+        fight_enemy(enemy)
 
 # Main game loop
 def explore():
@@ -54,8 +91,9 @@ def explore():
         print("\nYou are at a crossroad.")
         print("1. Enter the armoury")
         print("2. Explore the cell block")
-        print("3. Check inventory")
-        print("4. Quit game")
+        print("3. Visit the infirmary (Heal)")
+        print("4. Check inventory")
+        print("5. Quit game")
 
         choice = input("\nWhat do you want to do? ")
 
@@ -63,11 +101,14 @@ def explore():
             print("\nYou step into the armoury...")
             random_encounter()
         elif choice == "2":
-            print("\nYou enter the cell block and find a knife!")
+            print("\nYou explore the cell block and find a Knife!")
             player["inventory"].append("Knife")
         elif choice == "3":
-            print("\nYour inventory:", player["inventory"])
+            print("\nYou visit the infirmary and find a Health Potion!")
+            player["inventory"].append("Health Potion")
         elif choice == "4":
+            print("\nYour inventory:", player["inventory"])
+        elif choice == "5":
             print("\nThanks for playing!")
             break
         else:
