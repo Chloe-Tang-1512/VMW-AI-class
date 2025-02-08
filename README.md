@@ -1,4 +1,4 @@
-#this is zander hi
+#this is chloe hi
 import random
 
 # Player attributes
@@ -9,8 +9,8 @@ player = {
 
 # Enemy types with different behaviors
 enemies = {
-    "Goblin": {"health": 30, "attack": 10, "behavior": "aggressive"},
-    "Thief": {"health": 25, "attack": 7, "behavior": "trickster"},
+    "Guard": {"health": 30, "attack": 10, "behavior": "aggressive"},
+    "Assasin": {"health": 25, "attack": 15, "behavior": "stealthy"},
 }
 
 # Random encounter generator
@@ -51,20 +51,20 @@ def fight_enemy(enemy_name):
 # Main game loop
 def explore():
     while True:
-        print("\nYou are at a crossroads.")
-        print("1. Enter the Labyrinth")
-        print("2. Explore the ruins")
+        print("\nYou are at a crossroad.")
+        print("1. Enter the armoury")
+        print("2. Explore the cell block")
         print("3. Check inventory")
         print("4. Quit game")
 
         choice = input("\nWhat do you want to do? ")
 
         if choice == "1":
-            print("\nYou step into the Labyrinth...")
+            print("\nYou step into the armoury...")
             random_encounter()
         elif choice == "2":
-            print("\nYou enter the ruins and find an old sword!")
-            player["inventory"].append("Old Sword")
+            print("\nYou enter the cell block and find a knife!")
+            player["inventory"].append("Knife")
         elif choice == "3":
             print("\nYour inventory:", player["inventory"])
         elif choice == "4":
