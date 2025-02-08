@@ -5,21 +5,24 @@ player = {
     "health": 100,
     "inventory": [],
     "xp": 0,
-    "level": 1
+    "level": 1,
+    "attack": 10
 }
 
 # Enemy types with different behaviors
 enemies = {
     "Guard": {"health": 30, "attack": 10, "behavior": "aggressive"},
     "Assassin": {"health": 25, "attack": 15, "behavior": "stealthy"},
+    "Brute": {"health": 40, "attack": 12, "behavior": "strong"}
 }
 
 # Leveling system
 def level_up():
-    if player["xp"] >= player["level"] * 10:
+    if player["xp"] >= player["level"] * 15:
         player["level"] += 1
-        player["health"] = 100  # Restore health on level up
-        print(f"\nCongratulations! You leveled up to Level {player['level']}!")
+        player["health"] = min(100, player["health"] + 20)  # Restore some health on level up
+        player["attack"] += 2  # Increase attack power
+        print(f"\nCongratulations! You leveled up to Level {player['level']}! Your attack increased!")
 
 # Healing function
 def heal_player():
@@ -32,18 +35,18 @@ def heal_player():
 
 # Combat system
 def fight_enemy(enemy_name):
-    enemy = enemies[enemy_name]
+    enemy = enemies[enemy_name].copy()  # Prevent modifying the original enemy stats
     while player["health"] > 0 and enemy["health"] > 0:
         print(f"\n{enemy_name} Health: {enemy['health']} | Your Health: {player['health']}")
-        action = input("\nChoose an action: (1) Light Attack (2) Heavy Attack (3) Dodge (4) Run: ")
+        action = input("\nChoose an action: (1) Light Attack (2) Heavy Attack (3) Dodge (4) Use Item (5) Run: ")
 
         if action == "1":
-            damage = random.randint(5, 10)
+            damage = random.randint(player["attack"] - 3, player["attack"] + 3)
             enemy["health"] -= damage
             print(f"You deal {damage} damage to the {enemy_name}!")
         elif action == "2":
             if random.random() > 0.3:
-                damage = random.randint(10, 20)
+                damage = random.randint(player["attack"], player["attack"] + 6)
                 enemy["health"] -= damage
                 print(f"Heavy hit! You deal {damage} damage to the {enemy_name}!")
             else:
@@ -55,6 +58,9 @@ def fight_enemy(enemy_name):
             else:
                 print("You failed to dodge!")
         elif action == "4":
+            heal_player()
+            continue
+        elif action == "5":
             if random.choice([True, False]):
                 print("You successfully escaped!")
                 return
@@ -101,8 +107,9 @@ def explore():
             print("\nYou step into the armoury...")
             random_encounter()
         elif choice == "2":
-            print("\nYou explore the cell block and find a Knife!")
-            player["inventory"].append("Knife")
+            item_found = random.choice(["Knife", "Health Potion", "Gold Coin"])
+            print(f"\nYou explore the cell block and find a {item_found}!")
+            player["inventory"].append(item_found)
         elif choice == "3":
             print("\nYou visit the infirmary and find a Health Potion!")
             player["inventory"].append("Health Potion")
