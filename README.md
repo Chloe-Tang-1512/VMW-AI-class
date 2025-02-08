@@ -52,7 +52,7 @@ def fight_enemy(enemy_name):
 def explore():
     while True:
         print("\nYou are at a crossroads.")
-        print("1. Enter the forest")
+        print("1. Enter the Labyrinth")
         print("2. Explore the ruins")
         print("3. Check inventory")
         print("4. Quit game")
@@ -60,7 +60,7 @@ def explore():
         choice = input("\nWhat do you want to do? ")
 
         if choice == "1":
-            print("\nYou step into the dense forest...")
+            print("\nYou step into the Labyrinth...")
             random_encounter()
         elif choice == "2":
             print("\nYou enter the ruins and find an old sword!")
